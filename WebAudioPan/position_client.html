@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <script src="Three.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="positional_audio_client.js"></script>
+    <script src="configParsing.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+<!--     // <script src="http://code.jquery.com/jquery-1.11.1.js"></script> -->
+  </head>
+  <body>
+    <script>
+
+      // var userId = window.location.search.replace("?", "");
+      var socket = io();
+
+      var demo = new Demo({
+        positionEnabled: true,
+        velocityEnabled: false,
+        orientationEnabled: true,
+        environmentEnabled: false,
+        cubes: [],
+        socket : socket,
+      });
+
+
+    </script>
+  </body>
+</html>
