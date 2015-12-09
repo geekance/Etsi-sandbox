@@ -10,7 +10,7 @@
   <body>
     <script>
 
-      // var userId = window.location.search.replace("?", "");
+      var userId = window.location.search.replace("?", "");
       var socket = io();
 
       var demo = new Demo({
@@ -20,6 +20,7 @@
         environmentEnabled: false,
         cubes: [],
         socket : socket,
+        userId : userId
       });
 
 

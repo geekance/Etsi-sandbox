@@ -66,9 +66,10 @@ Demo.prototype = {
   environmentEnabled : true,
   userId: null,
   initComplete : false,
-  updateCube : false,
+  updateSounds : false,
   numberOfUsers : 0,
-  usersTable : {},
+  users : new Object(),
+  sounds : new Object(),
   socket : 0,
   alpha : null,
   beta : null,
@@ -83,14 +84,14 @@ Demo.prototype = {
   },
 
   readSessionUsers : function() {
-    this.cubes = [];
-    readXMLSessionUsers(this.cubes);
-    // console.log(this.cubes);
-    if (this.numberOfUsers != this.cubes.length)
+    this.sounds = [];
+    readXMLSessionUsers(this.sounds);
+    // console.log(this.sounds);
+    if (this.numberOfUsers != this.sounds.length)
     {
-      this.updateCube = true;
+      this.updateSounds = true;
     }
-    this.numberOfUsers = this.cubes.length;
+    this.numberOfUsers = this.sounds.length;
     // console.log(this.numberOfUsers);
   },
 
@@ -305,39 +306,62 @@ Demo.prototype = {
     object.sound.panner.coneOuterGain = outerGain;
   },
 
-  updateCube: function() {
+  newSound: function() {
+    var sound = {
+      "id": Object.keys(this.sounds).length,
+      "x": 0,
+      "y": -8,
+      "z": randomInt(-30, 30),
+      "directory": Object.keys(this.sounds).length + '.mp3'};
 
-    if (this.updateCube)
+      this.sounds[sound.id] = sound;
+      this.socket.emit('sendNewSound', this.sounds, sound.id);
+  },
+
+  removeSound: function() {
+      var id;
+      for (var i in this.sounds) {
+        id = this.sounds[i].id
+      };
+
+      delete this.sounds[id];
+      console.log(this.sounds);
+      this.socket.emit('sendRemoveSound', this.sounds);
+  },
+
+  updateSounds: function() {
+
+    if (this.updateSounds)
     {
-      for(var i in this.cubes){
-        var cube = this.cubes[i];  
-        this.createCube(cube.x, cube.y, cube.z, cube.sound);
+      for(var i in this.sounds){
+        var sound = this.sounds[i];  
+        this.createSound(sound.x, sound.y, sound.z, sound.sound);
       }  
     }
 
   },
 
-  createCube: function(x, y, z, soundPath) {
-    var cubeGeo = new THREE.BoxGeometry(1.20,1.20,2.00);
-    var cubeMat = new THREE.MeshLambertMaterial({color: 0xFF0000});
-    var cube = new THREE.Mesh(cubeGeo, cubeMat);
-    this.scene.add(cube);
+  createSound: function(x, y, z, soundPath) {
+    var soundGeo = new THREE.BoxGeometry(1.20,1.20,2.00);
+    var soundMat = new THREE.MeshLambertMaterial({color: 0xFF0000});
+    var sound = new THREE.Mesh(soundGeo, soundMat);
+    this.scene.add(sound);
 
-    cube.rotation.x = 4.7;
-    cube.rotation.z = 0;
+    sound.rotation.x = 4.7;
+    sound.rotation.z = 0;
 
-    cube.position.x = x;
-    cube.position.y = y;
-    cube.position.z = z;
+    sound.position.x = x;
+    sound.position.y = y;
+    sound.position.z = z;
 
-    cube.sound = this.loadSound(soundPath);
+    sound.sound = this.loadSound(soundPath);
     if (this.orientationEnabled) {
-      this.createSoundCone(cube, 1.0, 3.8, 0.1);
+      this.createSoundCone(sound, 1.0, 3.8, 0.1);
     }
-    this.setPosition(cube, x, y, z);
+    this.setPosition(sound, x, y, z);
   },
 
-  deleteCube : function() {
+  deleteSounds : function() {
     this.audio.context.close();
 
     for(var i = this.scene.children.length -1; i>=0; i--){
@@ -362,9 +386,9 @@ Demo.prototype = {
   setupObjects : function() {
     this.setupAudio();
 
-    for(var i in this.cubes){
-      var cube = this.cubes[i]; 
-      this.createCube(cube.x, cube.y, cube.z, cube.sound);
+    for(var i in this.sounds){
+      var sound = this.sounds[i]; 
+      this.createSound(sound.x, sound.y, sound.z, sound.sound);
     }
 
     var light = new THREE.PointLight(0xFFFFFF);
@@ -473,6 +497,10 @@ Demo.prototype = {
         case 'D'.charCodeAt(0):
         case 39:
           self.keyRight = false; break;
+        case 'N'.charCodeAt(0):
+          self.newSound();break;
+        case 'R'.charCodeAt(0):
+          self.removeSound();break;
       }
     }, false); 
 
@@ -486,43 +514,43 @@ Demo.prototype = {
     window.addEventListener('touchstart', function() {
 
           
-      for (var i = 0; i < self.usersTable.users.length; i++) {
-        var cube = self.usersTable.users[i].probableFuture; 
-        self.createCube(cube.x, cube.y, cube.z, cube.path);
-      };
+      // for (var i = 0; i < self.users.length; i++) {
+      //   var sound = self.users[i].probableFuture; 
+      //   self.createSound(sound.x, sound.y, sound.z, sound.path);
+      // };
 
     }, false);
 
-    this.socket.on('usersTable', function(usersTable) {
+    this.socket.on('emitUsers', function(users) {
         
-       
-        if (self.userId == null) {
-          self.userId = usersTable.users.length -1;
-         }
-         
-        if (self.numberOfUsers != usersTable.users.length) { 
-
-          if (getMobileOperatingSystem() != "iOS") {
-            for (var i = 0; i < usersTable.users.length; i++) {
-              var cube = usersTable.users[i].probableFuture; 
-              self.createCube(cube.x, cube.y, cube.z, cube.path);
-            };
-          };
-        };
-        
-        self.numberOfUsers = usersTable.users.length;
-        self.usersTable = usersTable; 
-        self.xangle = self.usersTable.users[self.userId].angle;
+        self.numberOfUsers = users.length;
+        self.users = users; 
+        self.xangle = self.users[self.userId].angle;
         self.updateCameraTarget();
         self.camera.lookAt(self.camera.target.position);
         self.setListenerPosition( self.camera, 
-                                  usersTable.users[self.userId].x, 
-                                  usersTable.users[self.userId].y, 
-                                  usersTable.users[self.userId].z, 
-                                  usersTable.users[self.userId].dt/1000);
+                                  users[self.userId].x, 
+                                  users[self.userId].y, 
+                                  users[self.userId].z, 
+                                  users[self.userId].dt/1000);
     });
 
-    this.socket.emit('getUsersTable');
+    this.socket.on('emitSounds', function(sounds) {
+        self.deleteSounds();
+        if (Object.keys(sounds).length != 0) {
+          
+          self.setupAudio();
+        
+          self.sounds = sounds;
+          for(var i in self.sounds){
+            var sound = self.sounds[i]; 
+            self.createSound(sound.x, sound.y, sound.z, sound.directory);
+          }
+        };
+    });
+
+    this.socket.emit('getUsers');
+    this.socket.emit('getSounds');
 
   },
 
@@ -598,17 +626,17 @@ Demo.prototype = {
     // clientPosition = localStorage.getItem(client).split(',');
     // this.readSessionUsers();
 
-    // if (this.updateCube)
+    // if (this.updateSound)
     // {
 
-    //   this.deleteCube();
+    //   this.deletesound();
     //   this.setupAudio();
-    //   for(var i in this.cubes){
-    //     var cube = this.cubes[i]; 
-    //     console.log(cube.sound);
-    //     this.createCube(cube.x, cube.y, cube.z, cube.sound);
+    //   for(var i in this.sounds){
+    //     var sound = this.sounds[i]; 
+    //     console.log(sound.sound);
+    //     this.createSound(sound.x, sound.y, sound.z, sound.sound);
     //   }
-    //   this.updateCube = false;
+    //   this.updatesound = false;
     //   // this.hideScene();
 
     // }
@@ -634,14 +662,14 @@ Demo.prototype = {
       camX += -vz*dt*speed;
     }
 
-    if (this.usersTable.users != undefined) {
-      this.usersTable.users[this.userId].x = camX;
-      this.usersTable.users[this.userId].y = camY;
-      this.usersTable.users[this.userId].z = camZ;
-      this.usersTable.users[this.userId].angle = this.xangle;
-      this.usersTable.users[this.userId].dt = dt;
+    if (Object.keys(this.users).length != 0) {
+      this.users[this.userId].x = camX;
+      this.users[this.userId].y = camY;
+      this.users[this.userId].z = camZ;
+      this.users[this.userId].angle = this.xangle;
+      this.users[this.userId].dt = dt;
 
-      this.socket.emit('sendUsersTable', this.usersTable, this.userId);
+      this.socket.emit('sendUsers', this.users, this.userId);
     };
     
  }
