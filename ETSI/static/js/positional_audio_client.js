@@ -244,6 +244,8 @@ Demo.prototype = {
       
     });
 
+    // delete ctx; 
+    
     return sound;
   },
 
@@ -325,7 +327,7 @@ Demo.prototype = {
       };
 
       delete this.sounds[id];
-      console.log(this.sounds);
+      // console.log(this.sounds);
       this.socket.emit('sendRemoveSound', this.sounds);
   },
 
@@ -359,10 +361,12 @@ Demo.prototype = {
       this.createSoundCone(sound, 1.0, 3.8, 0.1);
     }
     this.setPosition(sound, x, y, z);
+
   },
 
   deleteSounds : function() {
     this.audio.context.close();
+    // delete this.audio.context;
 
     for(var i = this.scene.children.length -1; i>=0; i--){
       var object = this.scene.children[i];
@@ -385,11 +389,6 @@ Demo.prototype = {
 
   setupObjects : function() {
     this.setupAudio();
-
-    for(var i in this.sounds){
-      var sound = this.sounds[i]; 
-      this.createSound(sound.x, sound.y, sound.z, sound.sound);
-    }
 
     var light = new THREE.PointLight(0xFFFFFF);
     light.position.x = 4.00;
@@ -537,9 +536,10 @@ Demo.prototype = {
 
     this.socket.on('emitSounds', function(sounds) {
         self.deleteSounds();
+        self.setupAudio();
         if (Object.keys(sounds).length != 0) {
           
-          self.setupAudio();
+          
         
           self.sounds = sounds;
           for(var i in self.sounds){

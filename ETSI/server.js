@@ -8,9 +8,9 @@ var sounds = new Object();
 
 var connectCounter = 0;
 
-var numberOfTags = 2;
+var numberOfTags = 10;
 
-for (var i = 0; i <= numberOfTags; i++) {
+for (var i = 0; i < numberOfTags; i++) {
   var user = {
       "id": "x",
       "x": 0,
