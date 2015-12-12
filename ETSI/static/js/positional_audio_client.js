@@ -521,7 +521,8 @@ Demo.prototype = {
     }, false);
 
     this.socket.on('emitUsers', function(users) {
-        
+        console.log(users);
+        console.log(self.userId);
         self.numberOfUsers = users.length;
         self.users = users; 
         self.xangle = self.users[self.userId].angle;

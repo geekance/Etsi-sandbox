@@ -10,7 +10,7 @@ var connectCounter = 0;
 
 var numberOfTags = 10;
 
-for (var i = 0; i < numberOfTags; i++) {
+for (var i = 1; i <= numberOfTags; i++) {
   var user = {
       "id": "x",
       "x": 0,
@@ -34,16 +34,25 @@ function randomInt(min, max) {
 }
 
 app.use(express.static(__dirname + '/static/js'));
+app.use(express.static(__dirname + '/static/fonts'));
 app.use(express.static(__dirname + '/static/samples/futurP'));
 
 app.get('/', function(req, res) {
-  res.sendfile('position_client.html');
+  res.sendfile('etsi.html');
+  // res.sendfile('idSelec.html');
 });
 
 
 io.on('connection', function(socket){
   connectCounter++;
   console.log("connection: " + connectCounter);
+
+  socket.emit('newClient', {nbUserServer : numberOfTags});
+
+  socket.on('getListener', function(index){
+    io.emit("startListener", index);
+    console.log("startListener: " + index);
+  });
 
   socket.on('getUsers', function(msg){
     io.emit("emitUsers", users);

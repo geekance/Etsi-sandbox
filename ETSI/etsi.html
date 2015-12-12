@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<script type="text/javascript">"use strict";</script>
+<head>
+    <style type="text/css">
+    @font-face {
+        font-family: "bau";
+        src: url("bau-super.woff") format("woff");
+        font-weight: bold;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: "bau";
+        src: url("bau-medium.woff") format("woff");
+        font-weight: normal;
+        font-style: normal;
+    }
+    html {
+        height: 100%;
+        width: 100%;
+    }
+    body {
+        padding: 0;
+        margin: 0;
+        font-size: 0;
+        font-family: bau;
+        font-weight: bold;
+        height: 100%;
+        box-sizing: border-box;
+        padding: 20px;
+        background: black;
+    }
+    .button {
+        background: white;
+        cursor : pointer;
+        transition: background 0.1s;
+    }
+    .button:hover {
+        background: Aquamarine;
+        transition: background 0.2s;
+    }
+    .button:active {
+        background: black;
+        transition: background 0.1s;
+    }
+    .button:before {
+        content: "";
+        margin-left: -100%;
+    }
+    .button:after {
+        content: "";
+        margin-right: -100%;
+    }
+    </style>
+</head>
+<html>
+    <body>
+        <div id="container" ></div>
+    </body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="idSelec.js"></script>
+    <script src="Three.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="positional_audio_client.js"></script>
+    <script src="configParsing.js"></script>
+    <script >
+        // var app = require('express')();
+        var container = document.getElementById("container");
+        container.style.height = '100%';
+        var socket = io.connect();
+        var nbUser = null;
+        var userId = null;
+        socket.on('newClient', function (data) {
+            nbUser = data.nbUserServer;
+            console.log(data);
+            buttonGrid();
+        });
+        socket.on('startListener', function (index) {
+            if (index == userId) {
+                console.log("open listener " + userId);
+                userId = "tagId" + userId;
+                var demo = new Demo({
+                    positionEnabled: true,
+                    velocityEnabled: false,
+                    orientationEnabled: true,
+                    environmentEnabled: false,
+                    cubes: [],
+                    socket : socket,
+                    userId : userId
+                });
+            };
+        });
+    </script>  
+
+    
+</html>
