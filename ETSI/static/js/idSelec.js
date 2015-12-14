@@ -59,8 +59,60 @@ function buttonGrid() {
             //event
             button.onclick = function() {
                 userId = this.parentNode.id;
-                socket.emit('getListener', this.parentNode.id);
-                window.container.remove()
+                // socket.emit('getListener', this.parentNode.id);
+                window.container.remove();
+
+                // ------
+                var vizDiv = document.createElement('div');
+                vizDiv.id = 'viz';
+
+                var canvas = document.createElement('canvas');
+                canvas.id = 'analyser';
+                canvas.width = '1024';
+                canvas.height = '500';
+                vizDiv.appendChild(canvas);
+
+                var canvas = document.createElement('canvas');
+                canvas.id = 'wavedisplay';
+                canvas.width = '1024';
+                canvas.height = '500';
+                vizDiv.appendChild(canvas);
+
+                document.body.appendChild(vizDiv);
+
+                var ctrlDiv = document.createElement('div');
+                ctrlDiv.id = 'controls';
+
+                var img = document.createElement('img');
+                img.id = 'record';
+                img.src = 'mic128.png';
+
+                img.addEventListener("click", function() {
+                    toggleRecording(this);
+                });
+
+                ctrlDiv.appendChild(img);
+
+                var aSave = document.createElement('a');
+                aSave.id = 'save';
+                aSave.href = '#';
+                aSave.height = '500';
+
+                var img = document.createElement('img');
+                img.src = 'save.svg';
+                
+                aSave.appendChild(img);
+
+                
+                ctrlDiv.appendChild(aSave);
+
+                document.body.appendChild(ctrlDiv);
+
+                initAudio();
+
+                // window.addEventListener('load', initAudio );    
+                // ------
+
                 console.log("je suis le bouton " + this.parentNode.id);
             }
         }

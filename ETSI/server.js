@@ -12,14 +12,15 @@ var numberOfTags = 10;
 
 for (var i = 1; i <= numberOfTags; i++) {
   var user = {
-      "id": "x",
-      "x": 0,
-      "y": 0,
-      "z": 0,
-      "dt": 0,
-      "angle": 0,
-      "isConnected" : false,
-      "isTagConnected": false};
+    "id": "x",
+    "x": 0,
+    "y": 0,
+    "z": 0,
+    "dt": 0,
+    "angle": 0,
+    "isConnected": false,
+    "isTagConnected": false
+  };
 
   user.id = "tagId" + i;
   users[user.id] = user;
@@ -30,10 +31,11 @@ for (var i = 1; i <= numberOfTags; i++) {
 console.log(users);
 
 function randomInt(min, max) {
-    return min + Math.floor(Math.random() * (max - min + 1));
+  return min + Math.floor(Math.random() * (max - min + 1));
 }
 
 app.use(express.static(__dirname + '/static/js'));
+app.use(express.static(__dirname + '/static/img'));
 app.use(express.static(__dirname + '/static/fonts'));
 app.use(express.static(__dirname + '/static/samples/futurP'));
 
@@ -43,43 +45,45 @@ app.get('/', function(req, res) {
 });
 
 
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
   connectCounter++;
   console.log("connection: " + connectCounter);
 
-  socket.emit('newClient', {nbUserServer : numberOfTags});
+  socket.emit('newClient', {
+    nbUserServer: numberOfTags
+  });
 
-  socket.on('getListener', function(index){
+  socket.on('getListener', function(index) {
     io.emit("startListener", index);
     console.log("startListener: " + index);
   });
 
-  socket.on('getUsers', function(msg){
+  socket.on('getUsers', function(msg) {
     io.emit("emitUsers", users);
   });
 
-  socket.on('getSounds', function(msg){
+  socket.on('getSounds', function(msg) {
     io.emit("emitSounds", sounds);
   });
 
-  socket.on('sendUsers', function(table, index){
+  socket.on('sendUsers', function(table, index) {
     users[index] = table[index];
     io.emit("emitUsers", users);
   });
 
-  socket.on('sendNewSound', function(table, index){
+  socket.on('sendNewSound', function(table, index) {
     sounds[index] = table[index];
     io.emit("emitSounds", sounds);
   });
 
-  socket.on('sendRemoveSound', function(table){
+  socket.on('sendRemoveSound', function(table) {
     sounds = table;
     io.emit("emitSounds", sounds);
   });
 
-  socket.on('disconnect', function(socket){
+  socket.on('disconnect', function(socket) {
     connectCounter--;
-    
+
     console.log("disconnect: " + socket);
 
   });
