@@ -40,10 +40,14 @@ app.use(express.static(__dirname + '/static/fonts'));
 app.use(express.static(__dirname + '/static/samples/futurP'));
 
 app.get('/', function(req, res) {
-  res.sendfile('etsi.html');
+  res.sendfile('etsi_listener.html');
   // res.sendfile('idSelec.html');
 });
 
+app.get('/record', function(req, res) {
+  res.sendfile('etsi_recorder.html');
+  // res.sendfile('idSelec.html');
+});
 
 io.on('connection', function(socket) {
   connectCounter++;
