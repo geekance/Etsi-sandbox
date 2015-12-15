@@ -75,8 +75,8 @@ io.on('connection', function(socket) {
     io.emit("emitUsers", users);
   });
 
-  socket.on('sendNewSound', function(table, index) {
-    sounds[index] = table[index];
+  socket.on('sendNewSound', function(sound, index) {
+    sounds[index] = sound;
     io.emit("emitSounds", sounds);
   });
 

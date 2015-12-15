@@ -4,9 +4,30 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title>Audio Recorder</title>
 
+	<script src="configParsing.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
 	<script src="audiodisplay.js"></script>
 	<script src="recorder.js"></script>
 	<script src="main.js"></script>
+
+	<script> 
+		var socket = io.connect();
+
+		function newSound() {
+		    var sound = {
+		      "id": "myRecording00",
+		      "x": 0,
+		      "y": -8,
+		      "z": randomInt(-30, 30),
+		      "directory": "myRecording00" + '.wav'
+		    };
+
+		    socket.emit('sendNewSound', sound, sound.id);
+		}
+
+		
+	</script>
+	
 	<style>
 	html { overflow: hidden; }
 	body { 

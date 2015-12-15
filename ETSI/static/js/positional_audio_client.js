@@ -326,7 +326,7 @@ Demo.prototype = {
     };
 
     this.sounds[sound.id] = sound;
-    this.socket.emit('sendNewSound', this.sounds, sound.id);
+    this.socket.emit('sendNewSound', sound, sound.id);
   },
 
   removeSound: function() {
