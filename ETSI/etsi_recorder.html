@@ -13,16 +13,20 @@
 	<script> 
 		var socket = io.connect();
 
-		function newSound() {
+		function newSound(filename) {
+			console.log("click");
 		    var sound = {
-		      "id": "myRecording00",
+		      "id": filename,
 		      "x": 0,
 		      "y": -8,
 		      "z": randomInt(-30, 30),
-		      "directory": "myRecording00" + '.wav'
+		      "directory": filename
 		    };
 
-		    socket.emit('sendNewSound', sound, sound.id);
+		    window.setTimeout(
+      			socket.emit('sendNewSound', sound, sound.id), 100000);
+
+		    
 		}
 
 		

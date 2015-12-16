@@ -37,7 +37,7 @@ function randomInt(min, max) {
 app.use(express.static(__dirname + '/static/js'));
 app.use(express.static(__dirname + '/static/img'));
 app.use(express.static(__dirname + '/static/fonts'));
-app.use(express.static(__dirname + '/static/samples/futurP'));
+app.use(express.static(__dirname + '/static/samples'));
 
 app.get('/', function(req, res) {
   res.sendfile('etsi_listener.html');

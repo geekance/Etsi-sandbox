@@ -112,10 +112,10 @@ DEALINGS IN THE SOFTWARE.
     var link = document.getElementById("save");
     link.href = url;
     link.download = filename || 'output.wav';
-    link.addEventListener("click", function() {
-      newSound();
-      console.log("click");
-    });
+    link.addEventListener("click", window.setTimeout(function() {
+      
+      newSound(filename);
+    }, 10000));
   }
 
   window.Recorder = Recorder;
