@@ -115,7 +115,7 @@ DEALINGS IN THE SOFTWARE.
     link.addEventListener("click", window.setTimeout(function() {
       
       newSound(filename);
-    }, 10000));
+    }, 2000));
   }
 
   window.Recorder = Recorder;
